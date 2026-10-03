@@ -34,6 +34,8 @@ services:
       context: ../background
       dockerfile: Dockerfile
     restart: unless-stopped
+    expose:
+      - "8080"
     env_file:
       - ../.env.dev
     depends_on:

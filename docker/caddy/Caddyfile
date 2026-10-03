@@ -15,5 +15,10 @@
 
 https://:8443 {
 	tls /certs/fullchain.pem /certs/privkey.pem
-	reverse_proxy server:8080
+	handle /ping {
+		reverse_proxy background:8080
+	}
+	handle {
+		reverse_proxy server:8080
+	}
 }
