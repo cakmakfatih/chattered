@@ -1,0 +1,14 @@
+{
+	admin 0.0.0.0:2019
+	layer4 {
+		:443 {
+			@acme tls alpn acme-tls/1
+			route @acme {
+				proxy acme:8443
+			}
+			route {
+				close
+			}
+		}
+	}
+}

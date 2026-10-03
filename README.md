@@ -1,37 +1,38 @@
 # Chattered
 
-Chattered ana deposu, mobil uygulama, API ve background worker projelerini ayrı Git depoları olarak submodule biçiminde bir araya getirir. Ana depo her modül için kullanılacak commit'i kaydeder.
+The Chattered root repository brings together the mobile app, API, and background worker as Git submodules. The root repository records the commit used by each module.
 
-## Dizinler
+## Directories
 
-- `mobile/`: Expo ve React Native mobil uygulaması (Git submodule).
-- `server/`: Gin tabanlı Go API'si (Git submodule).
-- `background/`: Asynq kullanan Go background worker (Git submodule).
-- `docker/`: PostgreSQL, Redis ve background worker için `compose.dev.yml`.
+- `mobile/`: Expo and React Native mobile app (Git submodule).
+- `server/`: Gin-based Go API (Git submodule).
+- `background/`: Asynq-based Go background worker (Git submodule).
+- `docker/`: PostgreSQL, Redis, API, background worker, Caddy reverse proxy, and ACME certificate renewal services in `compose.dev.yml`.
 
-Her submodule kendi Git geçmişini ve `dev` branch'ini korur. Bu depolar private olduğu için klonlayacak GitHub hesabının ana depoya ve üç submodule deposuna da erişimi olmalıdır.
+Each submodule keeps its own Git history and `dev` branch. These repositories are private, so the GitHub account used to clone must have access to the root repository and all three submodule repositories.
 
-## Klonlama
+## Clone
 
-Submodule'leriyle birlikte klonlamak için:
+Clone the repository with all submodules:
 
 ```sh
-git clone --recurse-submodules https://github.com/cakmakfatih/chattered.git
+git clone --recurse-submodules git@github.com:cakmakfatih/chattered.git
 ```
 
-Depo daha önce submodule'ler olmadan klonlandıysa bunları başlatmak için:
+If the repository was cloned without its submodules, initialize them with:
 
 ```sh
 git submodule update --init --recursive
 ```
 
-## Geliştirme ortamı
+## Development environment
 
-1. Ana dizindeki `.env.example` dosyasını `.env.dev` olarak kopyalayıp parola yer tutucularını değiştirin.
-2. Servisleri başlatmak için `docker compose -f docker/compose.dev.yml up --build` komutunu çalıştırın.
-3. `mobile/.env.example` dosyasını `mobile/.env` olarak kopyalayıp Clerk publishable key'i ve API adresini girin. Mobil Clerk akışı için Clerk Dashboard'da Native API'yi etkinleştirin.
-4. `server/.env.example` dosyasını `server/.env` olarak kopyalayıp Clerk secret key'i ve veritabanı adresini girin.
-5. API'yi hot reload ile çalıştırmak için `server/` dizininde `go tool air` komutunu kullanın.
-6. Mobil uygulamayı başlatmak için `mobile/` dizininde `npm install` ve `npx expo start` komutlarını kullanın.
+1. Copy the root `.env.example` to `.env.dev` and replace the password placeholders and Clerk secret key.
+2. Start the services with `docker compose -f docker/compose.dev.yml up --build`. The API and background worker use the root `.env.dev`; PostgreSQL, Redis, and the API are not published on host ports. Caddy is the only service published, on TCP port `443`.
+3. Copy `mobile/.env.example` to `mobile/.env.dev`, then set the Clerk publishable key and API URL. Enable Native API in the Clerk Dashboard for the mobile Clerk flow.
+4. To run the API with hot reload outside Compose, copy `server/.env.example` to `server/.env.dev`, set its values, and run `go tool air` from `server/`.
+5. To start the mobile app, run `npm install` and `npx expo start` from `mobile/`.
 
-Mobil cihazdan yerel API'ye erişirken `localhost` yerine bilgisayarın yerel ağ IP adresini kullanın.
+When running the API directly on your development computer, use its local network address in the mobile app instead of `localhost`.
+
+For a public development server without a domain, Caddy terminates HTTPS for the machine's public IPv4 address. The ACME sidecar obtains and renews a short-lived IP certificate using the TLS-ALPN challenge on port `443`; no public IP is hard-coded in the Compose files. Allow inbound TCP `443` in the host firewall/security rules.

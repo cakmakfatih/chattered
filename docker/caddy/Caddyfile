@@ -1,0 +1,19 @@
+{
+	admin 0.0.0.0:2019
+	layer4 {
+		:443 {
+			@acme tls alpn acme-tls/1
+			route @acme {
+				proxy acme:8443
+			}
+			route {
+				proxy 127.0.0.1:8443
+			}
+		}
+	}
+}
+
+https://:8443 {
+	tls /certs/fullchain.pem /certs/privkey.pem
+	reverse_proxy server:8080
+}
