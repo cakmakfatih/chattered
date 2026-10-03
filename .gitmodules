@@ -1,6 +1,9 @@
 [submodule "server"]
 	path = server
-	url = D:/Chattered-remotes/server.git
+	url = https://github.com/cakmakfatih/chattered-server.git
 [submodule "mobile"]
 	path = mobile
-	url = D:/Chattered-remotes/mobile.git
+	url = https://github.com/cakmakfatih/chattered-client.git
+[submodule "background"]
+	path = background
+	url = https://github.com/cakmakfatih/chattered-background.git

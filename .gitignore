@@ -1,0 +1,22 @@
+# Local environment files
+/.env
+/.env.*
+!/.env.example
+!/.env.*.example
+
+# Root-level generated output
+/build/
+/coverage/
+/dist/
+/web-build/
+/node_modules/
+
+# Operating system and editor files
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+.vscode/
+
+# Logs
+*.log
